@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snake & Ladders Ultimate</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="game-container">
+        <!-- Sidebar / Stats -->
+        <aside class="sidebar glass-panel">
+            <h1 class="game-title">SNAKES <br>&<br> LADDERS</h1>
+
+            <div class="turn-indicator" id="turnIndicator">
+                Player 1's Turn
+            </div>
+
+            <div class="players-stats">
+                <div class="player-card active" id="p1-card">
+                    <div class="avatar p1-avatar"></div>
+                    <div class="info">
+                        <span>Player 1</span>
+                        <span class="position" id="p1-pos">Pos: 1</span>
+                    </div>
+                </div>
+                <div class="player-card" id="p2-card">
+                    <div class="avatar p2-avatar"></div>
+                    <div class="info">
+                        <span>Player 2</span>
+                        <span class="position" id="p2-pos">Pos: 1</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <div class="dice-container" id="diceContainer">
+                    <div class="dice-face">🎲</div>
+                </div>
+                <button id="rollBtn" class="btn-primary">ROLL DICE</button>
+                <div id="messageBox" class="message-box"></div>
+            </div>
+
+            <button id="resetBtn" class="btn-secondary">Reset Game</button>
+        </aside>
+
+        <!-- Game Board -->
+        <main class="board-wrapper glass-panel">
+            <div id="board" class="game-board">
+                <!-- Cells generated via JS -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Victory Modal -->
+    <div id="victoryModal" class="modal">
+        <div class="modal-content glass-panel">
+            <h2 id="winnerTitle">Player 1 Wins!</h2>
+            <button id="newGameBtn" class="btn-primary">New Game</button>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+
+</html>

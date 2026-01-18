@@ -1,0 +1,384 @@
+:root {
+    --bg-dark: #121218;
+    --primary: #f43f5e;
+    /* Red/Pinkish for Snakes/Danger vibe or just vibrant */
+    --accent: #3b82f6;
+    /* Blue */
+    --glass-bg: rgba(255, 255, 255, 0.05);
+    --glass-border: 1px solid rgba(255, 255, 255, 0.1);
+    --board-bg: #1e1e24;
+    --cell-1: #282830;
+    --cell-2: #23232a;
+    --text-main: #fff;
+    --snake-color: #ef4444;
+    --ladder-color: #10b981;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-dark);
+    font-family: 'Outfit', sans-serif;
+    color: var(--text-main);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow: hidden;
+    /* Prevent scrolling if possible */
+    background: radial-gradient(circle at top left, #2e1065, transparent 40%),
+        radial-gradient(circle at bottom right, #881337, transparent 40%),
+        #121218;
+}
+
+.game-container {
+    display: flex;
+    gap: 2rem;
+    width: 95%;
+    max-width: 1400px;
+    height: 90vh;
+}
+
+/* Glassmorphism Utilities */
+.glass-panel {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    border: var(--glass-border);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* Sidebar */
+.sidebar {
+    flex: 0 0 300px;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    align-items: center;
+    text-align: center;
+}
+
+.game-title {
+    font-size: 2.5rem;
+    line-height: 1;
+    background: linear-gradient(135deg, #f472b6, #4f46e5);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 900;
+}
+
+.turn-indicator {
+    font-size: 1.2rem;
+    font-weight: bold;
+    padding: 0.5rem 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50px;
+}
+
+.players-stats {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.player-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+}
+
+.player-card.active {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: scale(1.02);
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.p1-avatar {
+    background: #3b82f6;
+    border: 2px solid white;
+}
+
+.p2-avatar {
+    background: #f43f5e;
+    border: 2px solid white;
+}
+
+.info {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+}
+
+.position {
+    font-size: 0.9rem;
+    color: #94a3b8;
+}
+
+.controls {
+    margin-top: auto;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.dice-container {
+    width: 80px;
+    height: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 16px;
+    font-size: 3rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dice-rolling {
+    animation: shake 0.5s ease-in-out infinite;
+}
+
+@keyframes shake {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    25% {
+        transform: rotate(15deg);
+    }
+
+    50% {
+        transform: rotate(0deg);
+    }
+
+    75% {
+        transform: rotate(-15deg);
+    }
+
+    100% {
+        transform: rotate(0deg);
+    }
+}
+
+.btn-primary {
+    width: 100%;
+    padding: 1rem;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: white;
+    font-weight: bold;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px -5px rgba(59, 130, 246, 0.5);
+}
+
+.btn-secondary {
+    background: transparent;
+    color: #94a3b8;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.btn-secondary:hover {
+    color: white;
+}
+
+.message-box {
+    min-height: 20px;
+    font-size: 0.9rem;
+    color: #ffd700;
+}
+
+/* Board */
+.board-wrapper {
+    flex: 1;
+    padding: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.game-board {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    grid-template-rows: repeat(10, 1fr);
+    width: 80vh;
+    /* Keep it square and responsive to height */
+    height: 80vh;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    background: var(--board-bg);
+    position: relative;
+    box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.5);
+}
+
+.cell {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 4px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.02);
+    position: relative;
+}
+
+.cell:nth-child(odd) {
+    background-color: var(--cell-1);
+}
+
+.cell:nth-child(even) {
+    background-color: var(--cell-2);
+}
+
+/* Snakes and Ladders Visual Indicators (CSS Lines) */
+/* Ideally, we might use SVG overlays, but for pure CSS/JS simplicity we can use absolute divs in the board wrapper. 
+   However, styling them to map exactly to cells is tricky without SVGs.
+   Let's use simple colored markers or borders on the cells for now, or overlays if possible.
+   For this version, we will colorize special cells.
+*/
+.snake-start {
+    background-color: rgba(239, 68, 68, 0.2) !important;
+    box-shadow: inset 0 0 10px var(--snake-color);
+}
+
+.ladder-start {
+    background-color: rgba(16, 185, 129, 0.2) !important;
+    box-shadow: inset 0 0 10px var(--ladder-color);
+}
+
+/* Player Tokens on Board */
+.player-token {
+    width: 60%;
+    height: 60%;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    z-index: 10;
+    transition: top 0.5s ease, left 0.5s ease;
+}
+
+.p1-token {
+    background: #3b82f6;
+    border: 2px solid white;
+    margin-left: -5px;
+    margin-top: -5px;
+}
+
+.p2-token {
+    background: #f43f5e;
+    border: 2px solid white;
+    margin-left: 5px;
+    margin-top: 5px;
+}
+
+/* Modal */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    backdrop-filter: blur(5px);
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-content {
+    padding: 3rem;
+    text-align: center;
+    background: #1e1e24;
+}
+
+#winnerTitle {
+    font-size: 3rem;
+    margin-bottom: 2rem;
+    color: var(--primary);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .game-container {
+        flex-direction: column;
+        height: auto;
+        align-items: center;
+        overflow-y: auto;
+    }
+
+    .sidebar {
+        width: 100%;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        padding: 1rem;
+    }
+
+    .game-title {
+        font-size: 1.5rem;
+    }
+
+    .turn-indicator {
+        order: 3;
+        width: 100%;
+        text-align: center;
+        margin-top: 1rem;
+    }
+
+    .players-stats {
+        width: auto;
+        flex-direction: row;
+    }
+
+    .controls {
+        width: auto;
+        flex-direction: row;
+    }
+
+    .board-wrapper {
+        width: 100%;
+        height: 100vw;
+        max-height: 80vh;
+    }
+
+    .game-board {
+        width: 100%;
+        height: 100%;
+    }
+}
